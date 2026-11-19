@@ -23,9 +23,9 @@ git clone [https://github.com/LucasC250/ControleEstacionamento-Benner-.git](http
 ```
 
 2. Abra pelo Visual Studio:
-Entre na pasta do projeto (`ControleEstacionamento-Benner-`) e clique duas vezes no arquivo **`ControleEstacionamento.slnx`** para abrir a solução completa. Depois é só rodar o projeto apertando F5 ou clicando no botão de iniciar.
+Entre na pasta do projeto  e clique duas vezes no arquivo **`ControleEstacionamento.slnx`** para abrir a solução completa. Depois é só rodar o projeto apertando F5 ou clicando no botão de iniciar.
 3. Ou execute pelo terminal:
-Entre na pasta onde está o arquivo `.csproj` (`ControleEstacionamento-Benner-/ControleEstacionamento_MVC/ControleEstacionamento`) e rode:
+Entre na pasta onde está o arquivo `.csproj` e rode:
 
 ```bash
 dotnet restore
