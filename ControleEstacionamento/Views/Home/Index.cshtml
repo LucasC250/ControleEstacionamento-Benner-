@@ -1,0 +1,203 @@
+
+@model dynamic
+
+@{
+    var mensagem = TempData["Mensagem"] as string;
+    var tipoMensagem = TempData["TipoMensagem"] as string;
+    ViewData["Title"] = "Painel principal";
+}
+
+<section class="page-heading">
+    <div>
+        <span class="eyebrow">PAINEL DE CONTROLE</span>
+        <h1>Carro Bem Guardado</h1>
+        <p>Gerencie entradas, saídas e acompanhe os veículos no estacionamento.</p>
+    </div>
+
+    <a class="btn btn-outline-primary"
+       asp-controller="Precos"
+       asp-action="Index">
+        ⚙  Configurar tarifas
+    </a>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(mensagem))
+{
+    <div class="alert alert-@((tipoMensagem ?? "info")) alert-dismissible fade show" role="alert">
+        @mensagem
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Fechar">
+        </button>
+    </div>
+}
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <div class="stat-icon blue">🚗</div>
+        <div>
+            <span>Veículos no pátio</span>
+            <strong>@ViewBag.Veiculos.Count</strong>
+            <small>Agora</small>
+        </div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-icon green">↘</div>
+        <div>
+            <span>Entradas hoje</span>
+            <strong>@ViewBag.TotalEntradasHoje</strong>
+            <small>Registros do dia</small>
+        </div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-icon orange">↗</div>
+        <div>
+            <span>Saídas hoje</span>
+            <strong>@ViewBag.TotalSaidasHoje</strong>
+            <small>Registros do dia</small>
+        </div>
+    </article>
+
+    <article class="stat-card">
+        <div class="stat-icon purple">R$</div>
+        <div>
+            <span>Faturamento hoje</span>
+            <strong>@ViewBag.FaturamentoHoje.ToString("C")</strong>
+            <small>Saídas finalizadas hoje</small>
+        </div>
+    </article>
+</section>
+
+<section class="actions-grid">
+    <article class="panel action-panel">
+        <div class="panel-title">
+            <div class="action-symbol entry">↘</div>
+            <div>
+                <h2>Registrar entrada</h2>
+                <p>Cadastre a chegada de um veículo.</p>
+            </div>
+        </div>
+
+        <form method="post" asp-controller="Home" asp-action="Entrada">
+            <label for="placaEntrada" class="form-label">
+                Placa do veículo
+            </label>
+
+            <input id="placaEntrada"
+                   name="placaEntrada"
+                   class="form-control plate-input"
+                   placeholder="ABC1D23"
+                   maxlength="8"
+                   minlength="7"
+                   required
+                   autocomplete="off" />
+
+            <button type="submit" class="btn btn-success w-100 mt-3">
+                ✓ Registrar entrada
+            </button>
+        </form>
+    </article>
+
+    <article class="panel action-panel">
+        <div class="panel-title">
+            <div class="action-symbol exit">↗</div>
+            <div>
+                <h2>Registrar saída</h2>
+                <p>Finalize a permanência e calcule o valor.</p>
+            </div>
+        </div>
+
+        <form method="post" asp-controller="Home" asp-action="Saida">
+            <label for="placaSaida" class="form-label">
+                Placa do veículo
+            </label>
+
+            <input id="placaSaida"
+                   name="placaSaida"
+                   class="form-control plate-input"
+                   placeholder="ABC1D23"
+                   maxlength="8"
+                   minlength="7"
+                   required
+                   autocomplete="off" />
+
+            <button type="submit" class="btn btn-danger w-100 mt-3">
+                ▤ Calcular e registrar saída
+            </button>
+        </form>
+    </article>
+</section>
+
+<section class="panel table-panel">
+    <div class="table-heading">
+        <div>
+            <h2>Veículos estacionados</h2>
+            <p>Lista atualizada dos veículos que ainda estão no pátio.</p>
+        </div>
+
+        <span class="count-pill">
+            @ViewBag.Veiculos.Count veículo(s)
+        </span>
+    </div>
+
+    @if (ViewBag.Veiculos.Count == 0)
+    {
+        <div class="empty-state">
+            <span class="empty-icon">🚗</span>
+            <strong>Nenhum veículo estacionado</strong>
+            <span>Quando uma entrada for registrada, o veículo aparecerá aqui.</span>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle parking-table">
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Horário de chegada</th>
+                        <th>Duração</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var veiculo in ViewBag.Veiculos)
+                    {
+                        var duracao = DateTime.Now - veiculo.HorarioEntrada;
+
+                        <tr>
+                            <td>
+                                <span class="plate-badge">@veiculo.Placa</span>
+                            </td>
+
+                            <td>
+                                @veiculo.HorarioEntrada.ToString("dd/MM/yyyy HH:mm:ss")
+                            </td>
+
+                            <td>
+                                @HomeController.FormatarDuracao(duracao)
+                            </td>
+
+                            <td>
+                                <span class="status-pill">
+                                    <span></span> Estacionado
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="panel-footer">
+        <a asp-controller="Historico" asp-action="Index">
+            Consultar histórico completo  →
+        </a>
+    </div>
+</section>

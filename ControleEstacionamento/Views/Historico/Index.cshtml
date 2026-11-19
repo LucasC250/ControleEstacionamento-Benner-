@@ -1,0 +1,35 @@
+@model List<ControleEstacionamento.EstacionamentoApp.RegistroEstacionamento>
+@{
+    ViewData["Title"] = "Histórico de movimentações";
+}
+<section class="page-heading">
+    <div><span class="eyebrow">CONSULTAS</span><h1>Histórico de movimentações</h1><p>Últimos 200 registros de entrada e saída.</p></div>
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">← Voltar ao painel</a>
+</section>
+<section class="panel table-panel">
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state"><div class="empty-icon">◷</div><strong>Sem movimentações</strong><span>Os registros aparecerão aqui depois que você cadastrar entradas.</span></div>
+    }
+    else
+    {
+        <div class="table-responsive"><table class="table align-middle parking-table">
+            <thead><tr><th>Placa</th><th>Entrada</th><th>Saída</th><th>Duração</th><th>Valor pago</th><th>Situação</th></tr></thead>
+            <tbody>
+            @foreach (var registro in Model)
+            {
+                var fim = registro.HorarioSaida ?? DateTime.Now;
+                var duracao = fim - registro.HorarioEntrada;
+                <tr>
+                    <td><span class="plate-badge">@registro.Placa</span></td>
+                    <td>@registro.HorarioEntrada.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>@(registro.HorarioSaida?.ToString("dd/MM/yyyy HH:mm:ss") ?? "—")</td>
+                    <td>@HomeController.FormatarDuracao(duracao)</td>
+                    <td>@(registro.ValorPago?.ToString("C") ?? "—")</td>
+                    <td>@if (registro.HorarioSaida == null) { <span class="status-pill"><span></span> Em aberto</span> } else { <span class="status-pill closed">Finalizado</span> }</td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+    }
+</section>

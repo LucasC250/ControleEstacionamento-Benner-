@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Carro Bem Guardado</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ControleEstacionamento.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid app-container">
+                <a class="navbar-brand brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">CB</span>
+                    <span>Carro Bem <strong>Guardado</strong></span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Painel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Historico" asp-action="Index">Histórico</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Precos" asp-action="Index">Tabela de preços</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container-fluid app-container main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="app-footer">
+        <div class="app-container">
+            © @DateTime.Now.Year Carro Bem Guardado <span>·</span> Controle de estacionamento
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

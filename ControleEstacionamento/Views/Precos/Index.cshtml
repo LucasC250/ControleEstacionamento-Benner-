@@ -1,0 +1,106 @@
+@model dynamic
+
+@{
+    var mensagem = TempData["Mensagem"] as string;
+    var tipoMensagem = TempData["TipoMensagem"] as string;
+    ViewData["Title"] = "Tabela de tarifas";
+}
+
+<section class="page-heading">
+    <div>
+        <span class="eyebrow">CONFIGURAÇÕES</span>
+        <h1>Tabela de preços</h1>
+        <p>Defina os valores cobrados e o período em que cada tarifa será válida.</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">← Voltar ao painel</a>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(mensagem))
+{
+    <div class="alert alert-@((tipoMensagem ?? "info"))">@mensagem</div>
+}
+
+<div class="settings-grid">
+    <section class="panel form-panel">
+        <div class="panel-title">
+            <div class="action-symbol entry">▦</div>
+            <div>
+                <h2>Nova tarifa</h2>
+                <p>Os valores serão aplicados pela data de entrada do veículo.</p>
+            </div>
+        </div>
+
+        <form method="post" asp-controller="Precos" asp-action="Salvar">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="dataInicio">Início da vigência</label>
+                    <input class="form-control" type="date" id="dataInicio" name="dataInicio" required />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="dataFim">Fim da vigência</label>
+                    <input class="form-control" type="date" id="dataFim" name="dataFim" required />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="valorHoraInicial">Valor da hora inicial (R$)</label>
+                    <input class="form-control" type="number" id="valorHoraInicial" name="valorHoraInicial" min="0.01" step="0.01" placeholder="2,00" required />
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="valorHoraAdicional">Valor da hora adicional (R$)</label>
+                    <input class="form-control" type="number" id="valorHoraAdicional" name="valorHoraAdicional" min="0" step="0.01" placeholder="1,00" required />
+                </div>
+            </div>
+
+            <div class="tariff-note">
+                ⓘ
+                <span>Até 30 minutos: metade da hora inicial. As horas adicionais possuem tolerância de 10 minutos por hora.</span>
+            </div>
+
+            <button class="btn btn-primary mt-3" type="submit">✓ Salvar tabela de preços</button>
+        </form>
+    </section>
+
+    <section class="panel table-panel">
+        <div class="table-heading">
+            <div>
+                <h2>Tarifas cadastradas</h2>
+                <p>Períodos de vigência registrados.</p>
+            </div>
+        </div>
+
+        @if (ViewBag.Tabelas.Count == 0)
+        {
+            <div class="empty-state">
+                ▦
+                <strong>Nenhuma tarifa cadastrada</strong>
+                <span>Cadastre a primeira tabela para começar a registrar entradas.</span>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Vigência</th>
+                            <th>Hora inicial</th>
+                            <th>Hora adicional</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tarifa in ViewBag.Tabelas)
+                        {
+                            <tr>
+                                <td>@tarifa.DataInicioVigencia.ToString("dd/MM/yyyy") até @tarifa.DataFimVigencia.ToString("dd/MM/yyyy")</td>
+                                <td>@tarifa.ValorHoraInicial.ToString("C")</td>
+                                <td>@tarifa.ValorHoraAdicional.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
