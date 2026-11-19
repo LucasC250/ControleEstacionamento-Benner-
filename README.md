@@ -46,7 +46,7 @@ O objetivo foi desenvolver uma aplicação simples para facilitar o controle de 
 
 
 
-SITE IMAGENS: 
+(SITE IMAGENS)
 
 PAINEL:
 <img width="1509" height="864" alt="image" src="https://github.com/user-attachments/assets/1304bb74-c669-445f-b0fd-c8c6196458e6" />
@@ -59,9 +59,3 @@ Tabela Preços:
 
 
 
-
-
-
-```
-
-```
