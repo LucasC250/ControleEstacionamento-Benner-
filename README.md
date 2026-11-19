@@ -44,6 +44,24 @@ Depois de executar, o terminal vai mostrar o endereço local da aplicação. Bas
 
 O objetivo foi desenvolver uma aplicação simples para facilitar o controle de um estacionamento, aplicando conceitos de C#, MVC, banco de dados e regras de negócio.
 
+
+
+SITE IMAGENS: 
+
+PAINEL:
+<img width="1509" height="864" alt="image" src="https://github.com/user-attachments/assets/1304bb74-c669-445f-b0fd-c8c6196458e6" />
+
+Histórico:
+<img width="1502" height="684" alt="image" src="https://github.com/user-attachments/assets/376f7abf-92b6-4230-a379-31ad0da694bb" />
+
+Tabela Preços:
+<img width="1476" height="578" alt="image" src="https://github.com/user-attachments/assets/97fbcdad-f205-4fdd-b15f-58bb24835393" />
+
+
+
+
+
+
 ```
 
 ```
