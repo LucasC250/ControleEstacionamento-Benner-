@@ -9,17 +9,6 @@ Aplicação web em ASP.NET Core MVC para registrar entradas e saídas de veícul
 - SQL Server 2022 (Docker)
 - xUnit e Moq para testes automatizados
 
-## Organização e responsabilidades
-
-A camada de serviços foi separada por responsabilidade (Single Responsibility Principle). Os contratos de entrada são `record` e concentram a normalização/validação dos dados recebidos; as entidades representam os dados persistidos e o resultado da saída é um tipo próprio (`ResultadoSaida`):
-
-| Serviço | Responsabilidade |
-| --- | --- |
-| `EntradaService` / `IEntradaService` | Validar e registrar entradas de veículos |
-| `SaidaService` / `ISaidaService` | Localizar a entrada aberta, aplicar a tarifa da data de entrada e registrar a saída |
-| `TabelaPrecoService` / `ITabelaPrecoService` | Cadastrar e consultar tabelas de preços e validar sobreposição de vigência |
-| `ConsultaEstacionamentoService` / `IConsultaEstacionamentoService` | Consultar veículos no pátio e histórico |
-| `CalculadoraPrecoService` / `ICalculadoraPrecoService` | Calcular o valor da permanência |
 
 ### Estrutura principal
 
@@ -38,7 +27,6 @@ ControleEstacionamento.Tests/
 └── Services/          # Testes unitários dos serviços
 ```
 
-Os serviços dependem de `IEstacionamentoDAO`, e não da implementação concreta. Isso permite substituir a persistência por mocks nos testes unitários. `EstacionamentoDAO` implementa essa interface e concentra as operações do Entity Framework Core.
 
 ## Executar o SQL Server com Docker
 
