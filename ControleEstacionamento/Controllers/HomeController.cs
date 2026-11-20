@@ -1,17 +1,24 @@
 
 using ControleEstacionamento.Models;
-using ControleEstacionamento.Services;
+using ControleEstacionamento.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControleEstacionamento.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly EstacionamentoService _service;
+    private readonly IEntradaService _entradaService;
+    private readonly ISaidaService _saidaService;
+    private readonly IConsultaEstacionamentoService _consultaService;
 
-    public HomeController(EstacionamentoService service)
+    public HomeController(
+        IEntradaService entradaService,
+        ISaidaService saidaService,
+        IConsultaEstacionamentoService consultaService)
     {
-        _service = service;
+        _entradaService = entradaService;
+        _saidaService = saidaService;
+        _consultaService = consultaService;
     }
 
     public IActionResult Error() => View();
@@ -28,7 +35,7 @@ public class HomeController : Controller
     {
         try
         {
-            _service.RegistrarEntrada(request);
+            _entradaService.RegistrarEntrada(request);
             TempData["Mensagem"] = $"Entrada do veículo {request.PlacaEntrada!.Trim().ToUpperInvariant()} registrada com sucesso.";
             TempData["TipoMensagem"] = "success";
         }
@@ -47,8 +54,8 @@ public class HomeController : Controller
     {
         try
         {
-            var resultado = _service.RegistrarSaida(request);
-            TempData["Mensagem"] = $"Saída registrada: {request.PlacaSaida!.Trim().ToUpperInvariant()} · Permanência: {FormatarDuracao(resultado.duracao)} · Total: {resultado.valor:C}";
+            var resultado = _saidaService.RegistrarSaida(request);
+            TempData["Mensagem"] = $"Saída registrada: {request.PlacaSaida!.Trim().ToUpperInvariant()} · Permanência: {FormatarDuracao(resultado.Duracao)} · Total: {resultado.Valor:C}";
             TempData["TipoMensagem"] = "success";
         }
         catch (Exception ex)
@@ -62,10 +69,10 @@ public class HomeController : Controller
 
     private void CarregarDashboard()
     {
-        ViewBag.Veiculos = _service.ObterVeiculosEstacionados();
+        ViewBag.Veiculos = _consultaService.ObterVeiculosEstacionados();
 
         var hoje = DateTime.Today;
-        var historicoHoje = _service.ObterHistorico(1000)
+        var historicoHoje = _consultaService.ObterHistorico(1000)
             .Where(r => r.HorarioEntrada.Date == hoje || r.HorarioSaida?.Date == hoje)
             .ToList();
 

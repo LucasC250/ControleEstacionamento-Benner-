@@ -1,10 +1,11 @@
 using ControleEstacionamento.Data;
+using ControleEstacionamento.Interfaces;
 using ControleEstacionamento.EstacionamentoApp;
 using Microsoft.EntityFrameworkCore;
 
 namespace ControleEstacionamento.DAOs;
 
-public class EstacionamentoDAO
+public class EstacionamentoDAO : IEstacionamentoDAO
 {
     private readonly EstacionamentoContext _db;
 

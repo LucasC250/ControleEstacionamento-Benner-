@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="ControleEstacionamento/ControleEstacionamento.csproj" />
+  <Project Path="ControleEstacionamento.Tests/ControleEstacionamento.Tests.csproj" />
 </Solution>

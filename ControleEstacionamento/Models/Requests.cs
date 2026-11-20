@@ -2,7 +2,7 @@ using ControleEstacionamento.EstacionamentoApp;
 
 namespace ControleEstacionamento.Models;
 
-public abstract class PlacaRequest
+public abstract record PlacaRequest
 {
     protected abstract string? PlacaInformada { get; }
 
@@ -11,8 +11,11 @@ public abstract class PlacaRequest
         if (string.IsNullOrWhiteSpace(PlacaInformada))
             throw new InvalidOperationException("Informe a placa do veículo.");
 
-        var placa = PlacaInformada.Trim().ToUpperInvariant();
-        placa = new string(placa.Where(char.IsLetterOrDigit).ToArray());
+        var placa = new string(PlacaInformada
+            .Trim()
+            .Where(char.IsLetterOrDigit)
+            .ToArray())
+            .ToUpperInvariant();
 
         if (placa.Length != 7)
             throw new InvalidOperationException("Informe uma placa válida com 7 caracteres.");
@@ -21,21 +24,21 @@ public abstract class PlacaRequest
     }
 }
 
-public class EntradaRequest : PlacaRequest
+public sealed record EntradaRequest : PlacaRequest
 {
     public string? PlacaEntrada { get; set; }
 
     protected override string? PlacaInformada => PlacaEntrada;
 }
 
-public class SaidaRequest : PlacaRequest
+public sealed record SaidaRequest : PlacaRequest
 {
     public string? PlacaSaida { get; set; }
 
     protected override string? PlacaInformada => PlacaSaida;
 }
 
-public class TabelaPrecoRequest
+public sealed record TabelaPrecoRequest
 {
     public DateTime DataInicio { get; set; }
     public DateTime DataFim { get; set; }
@@ -53,12 +56,18 @@ public class TabelaPrecoRequest
         if (DataFim.Date < DataInicio.Date)
             throw new InvalidOperationException("A data final não pode ser anterior à data inicial.");
 
-        var tabela = new TabelaPreco();
-        tabela.DataInicioVigencia = DataInicio.Date;
-        tabela.DataFimVigencia = DataFim.Date;
-        tabela.ValorHoraInicial = ValorHoraInicial;
-        tabela.ValorHoraAdicional = ValorHoraAdicional;
-
-        return tabela;
+        return new TabelaPreco
+        {
+            DataInicioVigencia = DataInicio.Date,
+            DataFimVigencia = DataFim.Date,
+            ValorHoraInicial = ValorHoraInicial,
+            ValorHoraAdicional = ValorHoraAdicional
+        };
     }
 }
+
+public sealed record ResultadoSaida(
+    decimal Valor,
+    DateTime Entrada,
+    DateTime Saida,
+    TimeSpan Duracao);

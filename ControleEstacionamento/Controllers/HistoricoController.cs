@@ -1,19 +1,19 @@
-using ControleEstacionamento.Services;
+using ControleEstacionamento.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControleEstacionamento.Controllers;
 
 public class HistoricoController : Controller
 {
-    private readonly EstacionamentoService _service;
+    private readonly IConsultaEstacionamentoService _consultaService;
 
-    public HistoricoController(EstacionamentoService service)
+    public HistoricoController(IConsultaEstacionamentoService consultaService)
     {
-        _service = service;
+        _consultaService = consultaService;
     }
 
     public IActionResult Index()
     {
-        return View(_service.ObterHistorico());
+        return View(_consultaService.ObterHistorico());
     }
 }

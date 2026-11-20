@@ -1,23 +1,36 @@
 using ControleEstacionamento.Data;
 using ControleEstacionamento.DAOs;
+using ControleEstacionamento.Interfaces;
 using ControleEstacionamento.Services;
+using ControleEstacionamento.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-var caminhoBanco = Path.Combine(
-    builder.Environment.ContentRootPath,
-    "estacionamento.db"
-);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "A connection string 'DefaultConnection' não foi configurada. " +
+        "Configure-a com User Secrets ou pela variável de ambiente ConnectionStrings__DefaultConnection.");
+}
 
 builder.Services.AddDbContext<EstacionamentoContext>(options =>
-    options.UseSqlite($"Data Source={caminhoBanco}")
+    options.UseSqlServer(connectionString, sqlServer => sqlServer.EnableRetryOnFailure())
 );
 
-builder.Services.AddScoped<EstacionamentoDAO>();
-builder.Services.AddScoped<EstacionamentoService>();
+
+builder.Services.AddScoped<IEstacionamentoDAO, EstacionamentoDAO>();
+
+builder.Services.AddScoped<IEntradaService, EntradaService>();
+builder.Services.AddScoped<ISaidaService, SaidaService>();
+builder.Services.AddScoped<ITabelaPrecoService, TabelaPrecoService>();
+builder.Services.AddScoped<IConsultaEstacionamentoService, ConsultaEstacionamentoService>();
+builder.Services.AddScoped<ICalculadoraPrecoService, CalculadoraPrecoService>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 var app = builder.Build();
 

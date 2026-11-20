@@ -1,21 +1,21 @@
 using ControleEstacionamento.Models;
-using ControleEstacionamento.Services;
+using ControleEstacionamento.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControleEstacionamento.Controllers;
 
 public class PrecosController : Controller
 {
-    private readonly EstacionamentoService _service;
+    private readonly ITabelaPrecoService _tabelaPrecoService;
 
-    public PrecosController(EstacionamentoService service)
+    public PrecosController(ITabelaPrecoService tabelaPrecoService)
     {
-        _service = service;
+        _tabelaPrecoService = tabelaPrecoService;
     }
 
     public IActionResult Index()
     {
-        ViewBag.Tabelas = _service.ObterTabelasPreco();
+        ViewBag.Tabelas = _tabelaPrecoService.ObterTabelasPreco();
         return View();
     }
 
@@ -25,7 +25,7 @@ public class PrecosController : Controller
     {
         try
         {
-            _service.SalvarTabelaPreco(request);
+            _tabelaPrecoService.SalvarTabelaPreco(request);
             TempData["Mensagem"] = "Tabela de preços cadastrada com sucesso.";
             TempData["TipoMensagem"] = "success";
         }
