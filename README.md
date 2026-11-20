@@ -75,10 +75,3 @@ dotnet test
 ```
 
 Os testes cobrem as regras de entrada, saída, cadastro/consulta de tarifas, consultas, validação dos records e cálculo de valores (incluindo os exemplos e limites de tolerância do enunciado). Os serviços são testados com `Moq`, isolando-os do SQL Server.
-
-## Observações
-
-- A tarifa usada na saída é sempre aquela cuja vigência contém a data de entrada do veículo.
-- O SQL Server possui um índice único filtrado para impedir duas entradas em aberto para a mesma placa.
-- `EnsureCreated()` é usado para simplificar a primeira execução do exercício. Em uma evolução do sistema, substitua-o por migrations do Entity Framework Core para versionar alterações no banco.
-- O arquivo `.env` contém a senha do SQL Server e não deve ser enviado ao Git; use `.env.example` como modelo.
