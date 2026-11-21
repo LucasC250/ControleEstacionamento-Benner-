@@ -1,77 +1,178 @@
 # Carro Bem Guardado – Sistema de Controle de Estacionamento
 
-Aplicação web em ASP.NET Core MVC para registrar entradas e saídas de veículos, consultar o histórico e gerenciar tabelas de preços com período de vigência.
+Sistema web desenvolvido em C# com ASP.NET Core MVC para controle de estacionamento. Permite registrar a entrada e saída de veículos, consultar o histórico e gerenciar tabelas de preços com períodos de vigência.
 
-## Tecnologias
+## Tecnologias utilizadas
 
 - C# / ASP.NET Core MVC (.NET 10)
 - Entity Framework Core 10
-- SQL Server 2022 (Docker)
-- xUnit e Moq para testes automatizados
+- SQL Server 2022
+- Docker e Docker Compose
+- xUnit
+- Moq
 
+## Estrutura do projeto
 
-### Estrutura principal
-
-```text
+```
 ControleEstacionamento/
-├── Controllers/       # Ações HTTP e integração com as views
-├── Data/              # DbContext e configuração do modelo
-├── DAOs/              # Consultas e persistência com Entity Framework Core
-├── Interfaces/        # Contrato da persistência
-├── Models/            # Entidades e records de entrada/saída
-├── Services/          # Regras de negócio, um serviço por responsabilidade
-│   └── Interfaces/    # Contratos dos serviços
-└── Views/             # Interface MVC
+├── Controllers/       # Controllers e ações da aplicação
+├── Data/              # Configuração do banco de dados
+├── DAOs/              # Consultas e persistência de dados
+├── Interfaces/        # Interfaces de persistência
+├── Models/            # Entidades e modelos
+├── Services/          # Regras de negócio
+│   └── Interfaces/    # Interfaces dos serviços
+└── Views/             # Telas da aplicação
+
 ControleEstacionamento.Tests/
-├── Models/            # Testes de validação dos records
-└── Services/          # Testes unitários dos serviços
+├── Models/            # Testes dos modelos
+└── Services/          # Testes dos serviços
 ```
 
+## Requisitos
 
-## Executar o SQL Server com Docker
+Para executar o projeto, é necessário ter instalado:
 
-1. Instale o Docker Desktop e inicie-o.
-2. Na pasta raiz do projeto, copie `.env.example` para `.env` e altere `MSSQL_SA_PASSWORD` para uma senha forte.
-3. Suba o banco:
+- [Git](https://git-scm.com/downloads)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-   ```bash
-   docker compose up -d
-   ```
+## 1. Baixar o projeto
 
-4. Confira se o container está em execução:
+Clone o repositório:
 
-   ```bash
-   docker compose ps
-   ```
+```
+git clone URL_DO_REPOSITORIO
+```
 
-O banco será criado automaticamente pela aplicação na primeira inicialização, por meio do `EnsureCreated()` do Entity Framework Core. O volume `sqlserver_data` mantém os dados quando o container é reiniciado.
+Entre na pasta raiz do projeto, onde estão o arquivo `docker-compose.yml` e o arquivo `.env.example`.
 
-## Configurar a conexão da aplicação
+Caso tenha baixado pelo GitHub em formato ZIP, basta extrair os arquivos e abrir o terminal nessa pasta.
 
-Na pasta do projeto web (`ControleEstacionamento`), configure a connection string usando User Secrets. Use a mesma senha definida no arquivo `.env`:
+## 2. Configurar o banco de dados
 
-```bash
+Abra o Docker Desktop e aguarde até que esteja iniciado.
+
+Na pasta raiz do projeto, copie o arquivo `.env.example`:
+
+```
+Copy-Item .env.example .env
+```
+
+Abra o arquivo `.env` e configure a senha do SQL Server:
+
+```
+MSSQL_SA_PASSWORD=SuaSenhaForteAqui123!
+```
+
+Essa senha será utilizada também na configuração da aplicação.
+
+Agora inicie o banco de dados:
+
+```
+docker compose up -d
+```
+
+Para verificar se o container está em execução:
+
+```
+docker compose ps
+```
+
+O SQL Server utiliza a porta `1433` e o volume `sqlserver_data` para armazenar os dados.
+
+Aguarde o SQL Server finalizar a inicialização antes de continuar.
+
+Se necessário, consulte os logs:
+
+```
+docker compose logs -f sqlserver
+```
+
+## 3. Configurar a conexão com o banco
+
+Entre na pasta do projeto principal:
+
+```
+cd ControleEstacionamento
+```
+
+Inicialize o User Secrets:
+
+```
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=EstacionamentoDb;User Id=sa;Password=Troque_Esta_Senha_123!;TrustServerCertificate=True;Encrypt=True"
 ```
 
-Substitua `Troque_Esta_Senha_123!` pela senha que você colocou no `.env`. A connection string não fica versionada no repositório.
+Configure a conexão com o SQL Server:
 
-Depois, ainda na pasta `ControleEstacionamento`, execute:
+```
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=EstacionamentoDb;User Id=sa;Password=SuaSenhaForteAqui123!;TrustServerCertificate=True;Encrypt=True"
+```
 
-```bash
+Substitua `SuaSenhaForteAqui123!` pela mesma senha definida no arquivo `.env`.
+
+A connection string fica armazenada localmente por meio do User Secrets, sem precisar ser adicionada ao repositório.
+
+## 4. Executar a aplicação
+
+Ainda dentro da pasta `ControleEstacionamento`, execute:
+
+```
 dotnet restore
+```
+
+Depois:
+
+```
 dotnet run
 ```
 
-A aplicação exige a connection string `ConnectionStrings:DefaultConnection`. Ela não inicia silenciosamente usando outro banco se essa configuração estiver ausente.
+Após iniciar, o terminal mostrará o endereço local da aplicação. Basta abrir esse endereço no navegador.
 
-## Executar os testes
+Na primeira execução, o Entity Framework Core utiliza `EnsureCreated()` para criar automaticamente o banco de dados e suas tabelas, caso ainda não existam.
 
-Na raiz da solução:
+Não é necessário criar o banco manualmente.
 
-```bash
+## 5. Executar os testes
+
+Volte para a pasta raiz da solução:
+
+```
+cd ..
+```
+
+Execute os testes automatizados:
+
+```
 dotnet test
 ```
 
-Os testes cobrem as regras de entrada, saída, cadastro/consulta de tarifas, consultas, validação dos records e cálculo de valores (incluindo os exemplos e limites de tolerância do enunciado). Os serviços são testados com `Moq`, isolando-os do SQL Server.
+Os testes foram desenvolvidos com xUnit e Moq e verificam as validações dos modelos e as regras de negócio dos serviços, incluindo entradas, saídas, tarifas e cálculos de valores.
+
+Os testes unitários utilizam dependências simuladas, não sendo necessário conectar ao SQL Server para executá-los.
+
+## 6. Encerrar a aplicação
+
+Para parar a aplicação, pressione `Ctrl + C` no terminal em que ela está sendo executada.
+
+Para parar o container do SQL Server:
+
+```
+docker compose down
+```
+
+Os dados continuam salvos no volume Docker e estarão disponíveis quando o container for iniciado novamente.
+
+Caso queira remover também os dados armazenados e começar com um banco vazio:
+
+```
+docker compose down -v
+```
+
+**Observações:**
+
+- O Docker Desktop precisa estar aberto para utilizar o banco de dados.
+- A porta `1433` precisa estar disponível.
+- A senha do `.env` e da connection string deve ser a mesma.
+- Não envie o arquivo `.env` com suas credenciais para o GitHub.
+- Os dados são mantidos no volume `sqlserver_data` entre as inicializações do container.
